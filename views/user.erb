@@ -1,6 +1,8 @@
 <h1><%= params[:nickname] %></h1>
 
-<% percentage = @badges.count / 19.0 * 100.0 %>
+<h2>Track Ruby</h2>
+
+<% percentage = @ruby_badges.count / 19.0 * 100.0 %>
 
 <% if percentage > 70 %>
   <span style="color: green; font-size: 32px"><%= percentage.round %>%</span>
@@ -8,10 +10,24 @@
   <span style="color: red; font-size: 32px"><%= percentage.round %>%</span>
 <% end %>
 
-<h2>Achieved</h2>
+<ul>
+  <% @ruby_badges.each do |badge| %>
+    <li><%= badge.title %></li>
+  <% end %>
+</ul>
+
+<h2>Track Web</h2>
+
+<% percentage = @web_badges.count.fdiv(WEB_BADGES_EN.count) * 100.0 %>
+
+<% if percentage > 70 %>
+  <span style="color: green; font-size: 32px"><%= percentage.round %>%</span>
+<% else %>
+  <span style="color: red; font-size: 32px"><%= percentage.round %>%</span>
+<% end %>
 
 <ul>
-  <% @badges.each do |badge| %>
+  <% @web_badges.each do |badge| %>
     <li><%= badge.title %></li>
   <% end %>
 </ul>
