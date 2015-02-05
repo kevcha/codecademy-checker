@@ -31,3 +31,19 @@
     <li><%= badge.title %></li>
   <% end %>
 </ul>
+
+<h2>Track Python</h2>
+
+<% percentage = @python_badges.count / 21.0 * 100.0 %>
+
+<% if percentage > 70 %>
+  <span style="color: green; font-size: 32px"><%= percentage.round %>%</span>
+<% else %>
+  <span style="color: red; font-size: 32px"><%= percentage.round %>%</span>
+<% end %>
+
+<ul>
+  <% @python_badges.each do |badge| %>
+    <li><%= badge.title %></li>
+  <% end %>
+</ul>

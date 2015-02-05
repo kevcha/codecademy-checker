@@ -42,6 +42,7 @@ get '/:nickname' do
   user = Codeacademy::User.new(params[:nickname])
   @ruby_badges = user.badges('ruby')
   @code_badges = user.badges('code')
+  @python_badges = user.badges('python')
   @web_badges = []
   @code_badges.each do |code_badge|
     if WEB_BADGES_EN.include?(code_badge.title) ||
