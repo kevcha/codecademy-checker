@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sinatra/json'
 require_relative "user"
 
 get '/' do
@@ -38,6 +39,16 @@ WEB_BADGES_EN = [
   'HTML Basics'
 ]
 
+RUBY_BADGES_COUNT = 19
+WEB_BADGES_COUNT = WEB_BADGES_EN.count
+PYTHON_BADGES_COUNT = 21
+
+COUNT = {
+  'ruby' => RUBY_BADGES_COUNT,
+  'web' => WEB_BADGES_COUNT,
+  'python' => PYTHON_BADGES_COUNT
+}
+
 get '/:nickname' do
   user = Codeacademy::User.new(params[:nickname])
   @ruby_badges = user.badges('ruby')
@@ -51,4 +62,18 @@ get '/:nickname' do
     end
   end
   erb :user
+end
+
+get '/api/:language/:nickname' do
+  begin
+    if !COUNT.keys.include?(params[:language])
+      json({ error: { type: "UnsupportedLanguage", message: "#{params[:language]} is not yet supported by the API"}})
+    else
+      user = Codeacademy::User.new(params[:nickname])
+      badges = user.badges(params[:language])
+      json({ percentage: (badges.count.fdiv(COUNT[params[:language]]) * 100).round, badges: badges })
+    end
+  rescue Codeacademy::User::UnknownUserError => e
+    json({ error: { type: e.class.name, message: "#{params[:nickname]} is not a CodeCademy username" } })
+  end
 end

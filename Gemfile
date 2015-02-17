@@ -3,3 +3,4 @@ ruby "2.2.0"
 
 gem 'nokogiri'
 gem 'sinatra'
+gem 'sinatra-contrib'

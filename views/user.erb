@@ -2,7 +2,7 @@
 
 <h2>Track Ruby</h2>
 
-<% percentage = @ruby_badges.count / 19.0 * 100.0 %>
+<% percentage = @ruby_badges.count.fdiv(RUBY_BADGES_COUNT) * 100 %>
 
 <% if percentage > 70 %>
   <span style="color: green; font-size: 32px"><%= percentage.round %>%</span>
@@ -18,7 +18,7 @@
 
 <h2>Track Web</h2>
 
-<% percentage = @web_badges.count.fdiv(WEB_BADGES_EN.count) * 100.0 %>
+<% percentage = @web_badges.count.fdiv(WEB_BADGES_COUNT) * 100 %>
 
 <% if percentage > 70 %>
   <span style="color: green; font-size: 32px"><%= percentage.round %>%</span>
@@ -34,7 +34,7 @@
 
 <h2>Track Python</h2>
 
-<% percentage = @python_badges.count / 21.0 * 100.0 %>
+<% percentage = @python_badges.count.fdiv(PYTHON_BADGES_COUNT) * 100 %>
 
 <% if percentage > 70 %>
   <span style="color: green; font-size: 32px"><%= percentage.round %>%</span>
