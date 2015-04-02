@@ -51,17 +51,21 @@ COUNT = {
 
 get '/:nickname' do
   user = Codeacademy::User.new(params[:nickname])
-  @ruby_badges = user.badges('ruby')
-  @code_badges = user.badges('code')
-  @python_badges = user.badges('python')
-  @web_badges = []
-  @code_badges.each do |code_badge|
-    if WEB_BADGES_EN.include?(code_badge.title) ||
-       WEB_BADGES_FR.include?(code_badge.title)
-       @web_badges << code_badge
+  begin
+    @ruby_badges = user.badges('ruby')
+    @code_badges = user.badges('code')
+    @python_badges = user.badges('python')
+    @web_badges = []
+    @code_badges.each do |code_badge|
+      if WEB_BADGES_EN.include?(code_badge.title) ||
+         WEB_BADGES_FR.include?(code_badge.title)
+         @web_badges << code_badge
+      end
     end
+    erb :user
+  rescue Codeacademy::User::UnknownUserError => e
+    erb :unknown_user
   end
-  erb :user
 end
 
 get '/api/:language/:nickname' do
@@ -75,5 +79,7 @@ get '/api/:language/:nickname' do
     end
   rescue Codeacademy::User::UnknownUserError => e
     json({ error: { type: e.class.name, message: "#{params[:nickname]} is not a CodeCademy username" } })
+  rescue Net::HTTPFatalError => e
+    json({ error: { type: e.class.name, message: e.message }})
   end
 end
