@@ -36,7 +36,7 @@ module Codeacademy
     private
 
     def achievements_url
-      "http://www.codecademy.com/users/#{@username}/achievements?locale=en"
+      "https://www.codecademy.com/users/#{@username}/achievements?locale=en"
     end
 
     def fetch(url)

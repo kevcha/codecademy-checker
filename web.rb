@@ -2,6 +2,13 @@ require 'sinatra'
 require 'sinatra/json'
 require_relative "user"
 
+require "better_errors"
+
+configure :development do
+  use BetterErrors::Middleware
+  BetterErrors.application_root = __dir__
+end
+
 get '/' do
   erb :index
 end
