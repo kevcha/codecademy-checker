@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'nokogiri'
 require 'net/http'
+require 'mechanize'
 require_relative 'badge'
 
 module Codeacademy
@@ -13,7 +14,7 @@ module Codeacademy
 
     def exist?
       begin
-        fetch achievements_url
+        fetch
         true
       rescue UnknownUserError
         false
@@ -22,7 +23,7 @@ module Codeacademy
 
     def badges(achievement_type = 'ruby')
       badges = []
-      doc = Nokogiri::HTML(fetch achievements_url)
+      doc = Nokogiri::HTML(fetch)
       doc.css(".achievement-card").each do |element|
         if element.css(".cc-achievement--#{achievement_type}-achievement").any?
           title = element.css('h5').first.text
@@ -35,17 +36,29 @@ module Codeacademy
 
     private
 
+    def login_url
+      "https://www.codecademy.com/login"
+    end
+
     def achievements_url
       "https://www.codecademy.com/users/#{@username}/achievements?locale=en"
     end
 
-    def fetch(url)
-      response = ::Net::HTTP.get_response(URI.parse(url))
-      case response
-      when Net::HTTPSuccess     then response.body
-      when Net::HTTPNotFound then fail UnknownUserError
-      else
-        response.error!
+    def fetch
+      agent = Mechanize.new
+      page = agent.get(login_url)
+
+      login_form = page.form
+      login_form.send(:'user[login]=', ENV['CODECADEMY_USERNAME'])
+      login_form.send(:'user[password]=', ENV['CODECADEMY_PASSWORD'])
+
+      agent.submit(login_form)
+      begin
+        page = agent.get(achievements_url)
+        page.body
+      rescue Mechanize::ResponseCodeError => e
+        puts e
+        fail UnknownUserError
       end
     end
   end
