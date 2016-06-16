@@ -3,6 +3,7 @@ require 'sinatra/json'
 require_relative "user"
 
 configure :development do
+  require "sinatra/reloader"
   require "better_errors"
   use BetterErrors::Middleware
   BetterErrors.application_root = __dir__
