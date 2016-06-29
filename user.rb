@@ -49,6 +49,8 @@ module Codeacademy
       page = agent.get(login_url)
 
       login_form = page.form
+      fail UnknownUserError if login_form.nil?
+
       login_form.send(:'user[login]=', ENV['CODECADEMY_USERNAME'])
       login_form.send(:'user[password]=', ENV['CODECADEMY_PASSWORD'])
 
