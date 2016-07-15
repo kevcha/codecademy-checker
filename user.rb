@@ -48,13 +48,19 @@ module Codeacademy
       agent = Mechanize.new
       page = agent.get(login_url)
 
-      login_form = page.form
-      fail UnknownUserError if login_form.nil?
+      # login_form = page.form
+      # fail UnknownUserError if login_form.nil?
 
-      login_form.send(:'user[login]=', ENV['CODECADEMY_USERNAME'])
-      login_form.send(:'user[password]=', ENV['CODECADEMY_PASSWORD'])
+      # login_form.send(:'user[login]=', ENV['CODECADEMY_USERNAME'])
+      # login_form.send(:'user[password]=', ENV['CODECADEMY_PASSWORD'])
 
-      agent.submit(login_form)
+      # agent.submit(login_form)
+
+      page = agent.post(login_url, {
+        "user[login]" => ENV['CODECADEMY_USERNAME'],
+        "user[password]" => ENV['CODECADEMY_PASSWORD'],
+      })
+
       begin
         page = agent.get(achievements_url)
         page.body
