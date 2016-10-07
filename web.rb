@@ -1,6 +1,8 @@
 require 'sinatra'
 require 'sinatra/json'
+require 'sinatra/respond_with'
 require_relative "user"
+require 'active_support/core_ext/hash'
 
 configure :development do
   require "sinatra/reloader"
@@ -75,18 +77,31 @@ get '/:nickname' do
   end
 end
 
-get '/api/:language/:nickname' do
+def call_api(params)
+  answer = nil
   begin
     if !COUNT.keys.include?(params[:language])
-      json({ error: { type: "UnsupportedLanguage", message: "#{params[:language]} is not yet supported by the API"}})
+      answer = { error: { type: "UnsupportedLanguage", message: "#{params[:language]} is not yet supported by the API"}}
     else
       user = Codeacademy::User.new(params[:nickname])
       badges = user.badges(params[:language])
-      json({ percentage: (badges.count.fdiv(COUNT[params[:language]]) * 100).round, badges: badges })
+      answer = { percentage: (badges.count.fdiv(COUNT[params[:language]]) * 100).round, badges: badges }
     end
   rescue Codeacademy::User::UnknownUserError => e
-    json({ error: { type: e.class.name, message: "#{params[:nickname]} is not a CodeCademy username" } })
+    answer = { error: { type: e.class.name, message: "#{params[:nickname]} is not a CodeCademy username" } }
   rescue Net::HTTPFatalError => e
-    json({ error: { type: e.class.name, message: e.message }})
+    answer = { error: { type: e.class.name, message: e.message }}
   end
+  return answer
+end
+
+get "/api/:language/:nickname.xml" do
+  answer = call_api(params)
+  content_type "application/xml"
+  answer.to_xml
+end
+
+get "/api/:language/:nickname" do
+  answer = call_api(params)
+  json(answer)
 end

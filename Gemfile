@@ -6,6 +6,8 @@ gem 'nokogiri'
 gem 'mechanize'
 gem 'sinatra'
 gem 'sinatra-contrib'
+gem 'builder'
+gem 'activesupport'
 
 gem 'pry-byebug'
 gem "better_errors"

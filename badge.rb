@@ -16,5 +16,12 @@ module Codeacademy
         date: @date
       }.to_json
     end
+
+    def to_xml(options = {})
+      options[:builder].tag!("badge",
+        title,
+        { date: @date }
+      )
+    end
   end
 end
