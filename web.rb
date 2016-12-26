@@ -51,11 +51,13 @@ WEB_BADGES_EN = [
 RUBY_BADGES_COUNT = 19
 WEB_BADGES_COUNT = WEB_BADGES_EN.count
 PYTHON_BADGES_COUNT = 21
+MAW_BADGES_COUNT = 5
 
 COUNT = {
   'ruby' => RUBY_BADGES_COUNT,
   'web' => WEB_BADGES_COUNT,
-  'python' => PYTHON_BADGES_COUNT
+  'python' => PYTHON_BADGES_COUNT,
+  'make_a_website' => MAW_BADGES_COUNT
 }
 
 get '/:nickname' do
@@ -75,6 +77,11 @@ get '/:nickname' do
   rescue Codeacademy::User::UnknownUserError => e
     erb :unknown_user
   end
+end
+
+get "/api/:nickname" do
+  user = Codeacademy::User.new(params[:nickname])
+  json(user.skills)
 end
 
 def call_api(params)
@@ -102,6 +109,7 @@ get "/api/:language/:nickname.xml" do
 end
 
 get "/api/:language/:nickname" do
+  pass if params[:nickname] == "skills"
   answer = call_api(params)
   json(answer)
 end

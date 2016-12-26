@@ -3,6 +3,7 @@ require 'nokogiri'
 require 'net/http'
 require 'mechanize'
 require_relative 'badge'
+require_relative 'skill'
 
 module Codeacademy
   class User
@@ -23,7 +24,7 @@ module Codeacademy
 
     def badges(achievement_type = 'ruby')
       badges = []
-      doc = Nokogiri::HTML(fetch)
+      doc = Nokogiri::HTML(fetch(achievements_url))
       doc.css(".achievement-card").each do |element|
         if element.css(".cc-achievement--#{achievement_type}-achievement").any?
           title = element.css('h5').first.text
@@ -32,6 +33,16 @@ module Codeacademy
         end
       end
       badges.sort_by &:date
+    end
+
+    def skills
+      skills = []
+      doc = Nokogiri::HTML(fetch(completed_skills_url))
+      doc.css(".completed").each do |element|
+        skill_array = element.text.strip.gsub("  ", "").gsub("\n", "").split("Completed")
+        skills << Skill.new(skill_array[0].strip, skill_array[1].strip)
+      end
+      skills
     end
 
     private
@@ -44,7 +55,11 @@ module Codeacademy
       "https://www.codecademy.com/users/#{@username}/achievements?locale=en"
     end
 
-    def fetch
+    def completed_skills_url
+      "https://www.codecademy.com/#{@username}?locale=en#completed"
+    end
+
+    def fetch(url)
       agent = Mechanize.new
       page = agent.get(login_url)
 
@@ -62,7 +77,7 @@ module Codeacademy
       })
 
       begin
-        page = agent.get(achievements_url)
+        page = agent.get(url)
         page.body
       rescue Mechanize::ResponseCodeError => e
         puts e
