@@ -39,8 +39,9 @@ module Codeacademy
       skills = []
       doc = Nokogiri::HTML(fetch(completed_skills_url))
       doc.css(".completed").each do |element|
+        slug = element.css(".link--target").first.attribute("href").value.split("/").last
         skill_array = element.text.strip.gsub("  ", "").gsub("\n", "").split("Completed")
-        skills << Skill.new(skill_array[0].strip, skill_array[1].strip)
+        skills << Skill.new(skill_array[0].strip, skill_array[1].strip, slug)
       end
       skills
     end
