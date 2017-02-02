@@ -47,3 +47,19 @@
     <li><%= badge.title %></li>
   <% end %>
 </ul>
+
+<h2>Code</h2>
+
+<% percentage = @code_badges.count.fdiv(MAW_BADGES_COUNT) * 100 %>
+
+<% if percentage > 70 %>
+  <span style="color: green; font-size: 32px"><%= percentage.round %>%</span>
+<% else %>
+  <span style="color: red; font-size: 32px"><%= percentage.round %>%</span>
+<% end %>
+
+<ul>
+  <% @code_badges.each do |badge| %>
+    <li><%= badge.title %></li>
+  <% end %>
+</ul>
